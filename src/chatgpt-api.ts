@@ -438,6 +438,17 @@ export class ChatGPTAPI {
       parentMessageId = parentMessage.parentMessageId
     } while (true)
 
+    // 尝试更改模型
+    let model = this._completionParams.model
+    if (model.includes("gpt-3.5-turbo-16k") && this._maxModelTokens < 4096) {
+      this._completionParams.model = "gpt-3.5-turbo"
+      this._maxModelTokens = 4096
+    }
+    if (model.includes("gpt-3.5-turbo-32k") && this._maxModelTokens < 8192) {
+      this._completionParams.model = "gpt-4"
+      this._maxModelTokens = 8192
+    }
+
     // Use up to 4096 tokens (prompt + response), but try to leave 1000 tokens
     // for the response.
     const maxTokens = Math.max(
